@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Mouse 3D</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="leftButton">Left</string>
+    <string name="rightButton">Right</string>
 </resources>
