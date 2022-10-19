@@ -6,15 +6,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private final static int REQUEST_ENABLE_BT = 1;
 
     private BluetoothAdapter bluetoothAdapter;
-    private BluetoothConnectionListener bluetoothConnectionListener;
+    private GyroscopeManager gyroscope;
+    private List<TextView> axisTextViews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,19 +33,17 @@ public class MainActivity extends AppCompatActivity {
 
         Button leftButton = findViewById(R.id.leftButton);
         Button rightButton = findViewById(R.id.rightButton);
+        axisTextViews = getAxisTextViews();
 
         if (leftButton != null) {
-            leftButton.setOnClickListener(view ->
-                    Toast.makeText(MainActivity.this, R.string.leftButton, Toast.LENGTH_SHORT).show()
-            );
+            leftButton.setOnClickListener(view -> Toast.makeText(MainActivity.this, R.string.leftButton, Toast.LENGTH_SHORT).show());
         }
 
         if (rightButton != null) {
-            rightButton.setOnClickListener(view ->
-                    Toast.makeText(MainActivity.this, R.string.rightButton, Toast.LENGTH_SHORT).show()
-            );
+            rightButton.setOnClickListener(view -> Toast.makeText(MainActivity.this, R.string.rightButton, Toast.LENGTH_SHORT).show());
         }
 
+        gyroscopeConfig();
     }
 
     private void configureBluetooth() {
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void ensureBluetoothIsEnabled() {
         if (!bluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -82,8 +85,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        gyroscope.register();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gyroscope.unregister();
+    }
+
     private void listenForBluetoothConnections() {
-        bluetoothConnectionListener = new BluetoothConnectionListener(bluetoothAdapter);
+        BluetoothConnectionListener bluetoothConnectionListener = new BluetoothConnectionListener(bluetoothAdapter);
         bluetoothConnectionListener.start();
+    }
+
+    private void gyroscopeConfig() {
+        gyroscope = new GyroscopeManager(MainActivity.this);
+        gyroscope.setListener((rx, ry, rz) -> {
+            try {
+                axisTextViews.get(0).setText(String.valueOf((int) (rx * 100)));
+                axisTextViews.get(1).setText(String.valueOf((int) (ry * 100)));
+                axisTextViews.get(2).setText(String.valueOf((int) (rz * 100)));
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        });
+    }
+
+    private List<TextView> getAxisTextViews() {
+        return List.of(findViewById(R.id.xAxisDisplay), findViewById(R.id.yAxisDisplay), findViewById(R.id.zAxisDisplay));
     }
 }
