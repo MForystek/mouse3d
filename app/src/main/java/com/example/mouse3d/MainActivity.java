@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     private final static int REQUEST_ENABLE_BT = 1;
 
     private BluetoothAdapter bluetoothAdapter;
+    private BluetoothConnectionListener bluetoothConnectionListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         bluetoothAdapter = (((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter());
 
         configureBluetooth();
+        listenForBluetoothConnections();
 
         Button leftButton = findViewById(R.id.leftButton);
         Button rightButton = findViewById(R.id.rightButton);
@@ -78,5 +80,10 @@ public class MainActivity extends AppCompatActivity {
                 exitApplicationIfBluetoothNotAvailable();
             }
         }
+    }
+
+    private void listenForBluetoothConnections() {
+        bluetoothConnectionListener = new BluetoothConnectionListener(bluetoothAdapter);
+        bluetoothConnectionListener.start();
     }
 }
