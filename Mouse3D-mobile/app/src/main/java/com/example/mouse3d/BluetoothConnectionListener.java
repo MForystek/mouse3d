@@ -9,7 +9,6 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.UUID;
 
 public class BluetoothConnectionListener extends Thread {
@@ -55,6 +54,12 @@ public class BluetoothConnectionListener extends Thread {
             bluetoothServerSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void write(byte[] bytes) {
+        if (bluetoothConnection.isAlive()) {
+            bluetoothConnection.write(bytes);
         }
     }
 

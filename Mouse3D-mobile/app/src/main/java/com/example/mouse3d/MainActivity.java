@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 axisTextViews.get(0).setText(String.valueOf((int) (rx)));
                 axisTextViews.get(1).setText(String.valueOf((int) (ry)));
                 axisTextViews.get(2).setText(String.valueOf((int) (rz)));
+                bluetoothManagement.write(ByteBuffer.allocate(12).putFloat(rx).putFloat(ry).putFloat(rz).array());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }

@@ -18,6 +18,7 @@ public class BluetoothManagement {
     private static BluetoothManagement instance;
 
     private BluetoothAdapter bluetoothAdapter;
+    private BluetoothConnectionListener bluetoothConnectionListener;
 
     public static BluetoothManagement getInstance() {
         if (bluetoothManager == null) {
@@ -87,7 +88,11 @@ public class BluetoothManagement {
     }
 
     private void listenForBluetoothConnections() {
-        BluetoothConnectionListener bluetoothConnectionListener = new BluetoothConnectionListener(bluetoothAdapter);
+        bluetoothConnectionListener = new BluetoothConnectionListener(bluetoothAdapter);
         bluetoothConnectionListener.start();
+    }
+
+    public void write(byte[] bytes) {
+        bluetoothConnectionListener.write(bytes);
     }
 }
