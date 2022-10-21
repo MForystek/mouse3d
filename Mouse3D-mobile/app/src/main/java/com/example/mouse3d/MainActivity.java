@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button leftButton = findViewById(R.id.leftButton);
         Button rightButton = findViewById(R.id.rightButton);
+        Button resetOrientationButton = findViewById(R.id.resetOrientationButton);
 
         if (leftButton != null) {
             leftButton.setOnClickListener(view -> Toast.makeText(MainActivity.this, R.string.leftButton, Toast.LENGTH_SHORT).show());
@@ -40,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (rightButton != null) {
             rightButton.setOnClickListener(view -> Toast.makeText(MainActivity.this, R.string.rightButton, Toast.LENGTH_SHORT).show());
+        }
+
+        if (resetOrientationButton != null) {
+            resetOrientationButton.setOnClickListener(view ->
+                    gyroscope.setRelativeDirections(gyroscope.getCurrentDirections()));
         }
     }
 
@@ -80,9 +86,9 @@ public class MainActivity extends AppCompatActivity {
         gyroscope = new GyroscopeManager(MainActivity.this);
         gyroscope.setListener((rx, ry, rz) -> {
             try {
-                axisTextViews.get(0).setText(String.valueOf((int) (rx * 100)));
-                axisTextViews.get(1).setText(String.valueOf((int) (ry * 100)));
-                axisTextViews.get(2).setText(String.valueOf((int) (rz * 100)));
+                axisTextViews.get(0).setText(String.valueOf((int) (rx)));
+                axisTextViews.get(1).setText(String.valueOf((int) (ry)));
+                axisTextViews.get(2).setText(String.valueOf((int) (rz)));
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
