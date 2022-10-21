@@ -8,6 +8,8 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class BluetoothConnectionListener extends Thread {
@@ -59,5 +61,13 @@ public class BluetoothConnectionListener extends Thread {
     private void manageConnectedBluetoothSocket(BluetoothSocket socket) {
         bluetoothConnection = new BluetoothConnection(socket);
         bluetoothConnection.start();
+        sendHelloWorldViaBluetooth();
+    }
+
+    //TODO delete after testing or transform into a test maybe?
+    private void sendHelloWorldViaBluetooth() {
+        String message = "Hello world!";
+        byte[] bytes = message.getBytes(StandardCharsets.UTF_8);
+        bluetoothConnection.write(bytes);
     }
 }
