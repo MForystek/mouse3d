@@ -23,10 +23,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle("Mouse 3D");
 
-        BluetoothManagement.setBluetoothManager((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE));
-        BluetoothManagement.setMainActivityReference(this);
-
-        bluetoothManagement = BluetoothManagement.getInstance();
+        bluetoothConfig();
 
         axisTextViews = getAxisTextViews();
         gyroscopeConfig();
@@ -80,6 +77,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         gyroscope.unregister();
+    }
+
+    private void bluetoothConfig() {
+        BluetoothManagement.setBluetoothManager((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE));
+        BluetoothManagement.setMainActivityReference(this);
+        bluetoothManagement = BluetoothManagement.getInstance();
     }
 
     private void gyroscopeConfig() {

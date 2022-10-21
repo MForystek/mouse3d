@@ -29,12 +29,12 @@ public class BluetoothConnection extends Thread {
         try {
             tmpInStr = bluetoothSocket.getInputStream();
         } catch (IOException e) {
-            Log.e(TAG, "Error occured when creating input stream", e);
+            Log.e(TAG, "Error occurred when creating input stream", e);
         }
         try {
             tmpOutStr = bluetoothSocket.getOutputStream();
         } catch (IOException e) {
-            Log.e(TAG, "Error occured when creating output stream", e);
+            Log.e(TAG, "Error occurred when creating output stream", e);
         }
 
         inputStream = tmpInStr;
@@ -67,7 +67,7 @@ public class BluetoothConnection extends Thread {
                     MessageConstants.MESSAGE_WRITE.getValue(), -1, -1, buffer);
             writtenMsg.sendToTarget();
         } catch (IOException e) {
-            Log.e(TAG, "Error occured when sending data", e);
+            Log.e(TAG, "Error occurred when sending data", e);
 
             Message writtenErrorMsg = handler.obtainMessage(
                     MessageConstants.MESSAGE_TOAST.getValue());

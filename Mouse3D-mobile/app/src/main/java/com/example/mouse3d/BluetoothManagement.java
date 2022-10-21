@@ -45,7 +45,7 @@ public class BluetoothManagement {
 
 
     private BluetoothManagement() {
-        bluetoothAdapter = (bluetoothManager.getAdapter());
+        bluetoothAdapter = bluetoothManager.getAdapter();
 
         configureBluetooth();
         listenForBluetoothConnections();
