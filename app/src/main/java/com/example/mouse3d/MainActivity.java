@@ -51,6 +51,11 @@ public class MainActivity extends AppCompatActivity {
                 exitApplicationDisplayingToastWithMessage("Enabling Bluetooth is required for Mouse 3D");
             }
         }
+        if (requestCode == BluetoothManagement.REQUEST_DISCOVERABLE_BT) {
+            if (resultCode == RESULT_CANCELED) {
+                exitApplicationDisplayingToastWithMessage("Device must be discoverable to pair with potential new devices");
+            }
+        }
     }
 
     public void exitApplicationDisplayingToastWithMessage(String message) {

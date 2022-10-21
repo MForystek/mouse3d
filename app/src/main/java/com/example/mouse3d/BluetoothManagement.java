@@ -10,6 +10,8 @@ import com.example.mouse3d.exception.NoMainActivityReferenceException;
 
 public class BluetoothManagement {
     public static final int REQUEST_ENABLE_BT = 1;
+    public static final int REQUEST_DISCOVERABLE_BT = 2;
+    public static final int DISCOVERY_TIME_SECONDS = 120;
 
     private static MainActivity mainActivityReference;
     private static BluetoothManager bluetoothManager;
@@ -52,6 +54,7 @@ public class BluetoothManagement {
     private void configureBluetooth() {
         ensureBluetoothExists();
         ensureBluetoothIsEnabled();
+        enableBeingDiscoverable();
     }
 
     private void ensureBluetoothExists() {
@@ -69,6 +72,17 @@ public class BluetoothManagement {
             } catch (SecurityException e) {
                 Toast.makeText(mainActivityReference, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private void enableBeingDiscoverable() {
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVERY_TIME_SECONDS);
+        try {
+            mainActivityReference.startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE_BT);
+        } catch (SecurityException e) {
+            Toast.makeText(mainActivityReference, e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
