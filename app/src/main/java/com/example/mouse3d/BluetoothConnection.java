@@ -14,13 +14,14 @@ import java.io.OutputStream;
 public class BluetoothConnection extends Thread {
     public static final String TAG = "MOUSE_3D_DEBUG";
     private static final int BUFFER_SIZE = 2048;
-    private Handler handler = new Handler(Looper.myLooper()); //TODO How it should be initialized?
+    private Handler handler;
     private final BluetoothSocket bluetoothSocket;
     private final InputStream inputStream;
     private final OutputStream outputStream;
     private byte[] buffer;
 
     public BluetoothConnection(BluetoothSocket bluetoothSocket) {
+        handler = new Handler(Looper.myLooper()); //TODO How it should be initialized?
         this.bluetoothSocket = bluetoothSocket;
         InputStream tmpInStr = null;
         OutputStream tmpOutStr = null;
