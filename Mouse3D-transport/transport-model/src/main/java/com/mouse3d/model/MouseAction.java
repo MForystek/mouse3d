@@ -1,4 +1,4 @@
-package com.example.mouse3d.model;
+package com.mouse3d.model;
 
 public enum MouseAction {
     MOVE,

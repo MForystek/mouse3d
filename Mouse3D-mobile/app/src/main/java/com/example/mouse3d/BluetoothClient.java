@@ -5,9 +5,9 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
-import com.example.mouse3d.dto.MouseEventDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mouse3d.model.MouseEventDto;
 
 import java.io.IOException;
 import java.io.OutputStream;

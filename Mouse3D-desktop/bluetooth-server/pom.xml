@@ -18,6 +18,14 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>com.mouse3d.model</groupId>
+            <artifactId>transport-model</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${user.home}/java/projects/mouse3d/Mouse3D-transport/transport-model/target/transport-model-1.0.jar</systemPath>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>

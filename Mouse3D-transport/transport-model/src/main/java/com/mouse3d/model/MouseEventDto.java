@@ -1,6 +1,5 @@
-package com.mouse3d.bluetoothserver.dto;
+package com.mouse3d.model;
 
-import com.mouse3d.bluetoothserver.model.MouseAction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

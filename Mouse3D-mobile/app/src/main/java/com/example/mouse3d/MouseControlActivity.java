@@ -9,8 +9,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.mouse3d.dto.MouseEventDto;
-import com.example.mouse3d.model.MouseAction;
+import com.mouse3d.model.MouseAction;
+import com.mouse3d.model.MouseEventDto;
 
 import java.io.IOException;
 import java.util.List;

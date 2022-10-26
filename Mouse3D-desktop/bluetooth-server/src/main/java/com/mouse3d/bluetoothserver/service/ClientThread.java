@@ -2,8 +2,8 @@ package com.mouse3d.bluetoothserver.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mouse3d.bluetoothserver.dto.MouseEventDto;
-import com.mouse3d.bluetoothserver.model.MouseAction;
+import com.mouse3d.model.MouseAction;
+import com.mouse3d.model.MouseEventDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,7 +61,6 @@ public class ClientThread implements Runnable{
     private void processRequest(String message) {
         try {
             var mouseEventDto = objectMapper.readValue(message, MouseEventDto.class);
-            //log.info("Received:" + mouseEventDto);
 
             if (mouseEventDto.getAction().equals(MouseAction.MOVE)) {
                 robot.mouseMove(mouseEventDto.getX(), mouseEventDto.getY());

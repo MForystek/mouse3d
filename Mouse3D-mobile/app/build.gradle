@@ -42,6 +42,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.4.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4.2'
     implementation 'org.projectlombok:lombok:1.18.24'
+    implementation files('/home/heliwrenaid/java/projects/mouse3d/Mouse3D-transport/transport-model/target/transport-model-1.0.jar')
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
