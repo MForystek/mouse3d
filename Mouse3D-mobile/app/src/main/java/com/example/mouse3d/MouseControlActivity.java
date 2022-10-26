@@ -52,7 +52,7 @@ public class MouseControlActivity extends AppCompatActivity {
     }
 
     private void initBluetoothClient() {
-      BluetoothDevice bluetoothDevice = BluetoothManagement.getInstance().getActualDevice();
+      BluetoothDevice bluetoothDevice = BluetoothManagement.getInstance().getActualRemoteDevice();
         try {
             bluetoothClient = new BluetoothClient(bluetoothDevice);
         } catch (IOException e) {
@@ -88,7 +88,11 @@ public class MouseControlActivity extends AppCompatActivity {
                 mouseEventDto.setX((int) rx);
                 mouseEventDto.setY((int) ry);
 
-                bluetoothClient.send(mouseEventDto);
+                if (bluetoothClient.send(mouseEventDto)) {
+                    Log.i(TAG, mouseEventDto.toString());
+                } else {
+                    Log.w(TAG, "Failed to send message: " + mouseEventDto);
+                }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }

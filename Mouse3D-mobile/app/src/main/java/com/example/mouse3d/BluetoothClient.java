@@ -15,11 +15,11 @@ import java.util.UUID;
 
 //TODO: run on thread or no ?
 public class BluetoothClient {
-    private BluetoothDevice bluetoothDevice;
+    private final BluetoothDevice bluetoothDevice;
     private BluetoothSocket bluetoothSocket;
     private OutputStream outputStream;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public static final String TAG = "BluetoothClient";
     public static final UUID SERVER_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -41,7 +41,6 @@ public class BluetoothClient {
     public boolean send(MouseEventDto mouseEventDto) {
         try {
            String json = objectMapper.writeValueAsString(mouseEventDto);
-            Log.i(TAG, json);
             return send(json.getBytes());
         } catch (JsonProcessingException e) {
             e.printStackTrace();

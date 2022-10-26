@@ -1,7 +1,6 @@
 package com.example.mouse3d;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
@@ -10,24 +9,28 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
-    private static final int SELECT_DEVICE = 0;
     private BluetoothManagement bluetoothManagement;
+    private ActivityResultLauncher<Intent> deviceListActivityLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        registerDeviceListActivityLauncher();
+
         bluetoothConfig();
 
         Button selectDeviceButton = findViewById(R.id.selectDeviceButton);
         selectDeviceButton.setOnClickListener(view -> {
-            Intent serverIntent = new Intent(MainActivity.this, DeviceListActivity.class);
-            startActivityForResult(serverIntent, SELECT_DEVICE);
+            Intent intent = new Intent(this, DeviceListActivity.class);
+            deviceListActivityLauncher.launch(intent);
         });
 
     }
@@ -43,19 +46,30 @@ public class MainActivity extends AppCompatActivity {
                 exitApplicationDisplayingToastWithMessage("Device must be discoverable to pair with potential new devices");
             }
         }
-        if (requestCode == SELECT_DEVICE) {
-            if (resultCode == Activity.RESULT_OK) {
-                String address = data.getExtras()
-                        .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-
-                Log.i(TAG, "Selected device with address: " + address);
-                BluetoothDevice bluetoothDevice = bluetoothManagement.getRemoteDevice(address);
-
-                Intent intent = new Intent(MainActivity.this, MouseControlActivity.class);
-                startActivity(intent);
-            }
-        }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void registerDeviceListActivityLauncher() {
+        deviceListActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent resultIntent = result.getData();
+                        if (resultIntent != null) {
+                            String address = resultIntent.getExtras()
+                                    .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+
+                            Log.i(TAG, "Selected device with address: " + address);
+                            bluetoothManagement.setRemoteDevice(address);
+
+                            Intent intent = new Intent(MainActivity.this, MouseControlActivity.class);
+                            startActivity(intent);
+                        } else {
+                            //TODO
+                        }
+                    } else {
+                        //TODO
+                    }
+                });
     }
 
     private void bluetoothConfig() {

@@ -17,7 +17,7 @@ public class BluetoothManagement {
     private static MainActivity mainActivityReference;
     private static BluetoothManager bluetoothManager;
     private static BluetoothManagement instance;
-    private static BluetoothDevice actualDevice;
+    private static BluetoothDevice actualRemoteDevice;
 
     private BluetoothAdapter bluetoothAdapter;
 
@@ -42,6 +42,14 @@ public class BluetoothManagement {
 
     public static void setMainActivityReference(MainActivity mouseControlActivityReference) {
         BluetoothManagement.mainActivityReference = mouseControlActivityReference;
+    }
+
+    public void setRemoteDevice(String deviceName) {
+        actualRemoteDevice = this.bluetoothAdapter.getRemoteDevice(deviceName);
+    }
+
+    public BluetoothDevice getActualRemoteDevice() {
+        return actualRemoteDevice;
     }
 
     private BluetoothManagement() {
@@ -84,12 +92,4 @@ public class BluetoothManagement {
         }
     }
 
-    public BluetoothDevice getRemoteDevice(String deviceName) {
-        actualDevice = this.bluetoothAdapter.getRemoteDevice(deviceName);
-        return actualDevice;
-    }
-
-    public BluetoothDevice getActualDevice() {
-        return actualDevice;
-    }
 }
