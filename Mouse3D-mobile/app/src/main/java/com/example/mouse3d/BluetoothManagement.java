@@ -1,6 +1,7 @@
 package com.example.mouse3d;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Intent;
 import android.widget.Toast;
@@ -16,9 +17,9 @@ public class BluetoothManagement {
     private static MainActivity mainActivityReference;
     private static BluetoothManager bluetoothManager;
     private static BluetoothManagement instance;
+    private static BluetoothDevice actualRemoteDevice;
 
     private BluetoothAdapter bluetoothAdapter;
-    private BluetoothConnectionListener bluetoothConnectionListener;
 
     public static BluetoothManagement getInstance() {
         if (bluetoothManager == null) {
@@ -39,17 +40,21 @@ public class BluetoothManagement {
         BluetoothManagement.bluetoothManager = bluetoothManager;
     }
 
-    public static void setMainActivityReference(MainActivity mainActivityReference) {
-        BluetoothManagement.mainActivityReference = mainActivityReference;
+    public static void setMainActivityReference(MainActivity mouseControlActivityReference) {
+        BluetoothManagement.mainActivityReference = mouseControlActivityReference;
     }
 
+    public void setRemoteDevice(String deviceName) {
+        actualRemoteDevice = this.bluetoothAdapter.getRemoteDevice(deviceName);
+    }
 
+    public BluetoothDevice getActualRemoteDevice() {
+        return actualRemoteDevice;
+    }
 
     private BluetoothManagement() {
         bluetoothAdapter = bluetoothManager.getAdapter();
-
         configureBluetooth();
-        listenForBluetoothConnections();
     }
 
     private void configureBluetooth() {
@@ -87,12 +92,4 @@ public class BluetoothManagement {
         }
     }
 
-    private void listenForBluetoothConnections() {
-        bluetoothConnectionListener = new BluetoothConnectionListener(bluetoothAdapter);
-        bluetoothConnectionListener.start();
-    }
-
-    public void write(byte[] bytes) {
-        bluetoothConnectionListener.write(bytes);
-    }
 }

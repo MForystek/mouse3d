@@ -1,55 +1,41 @@
 package com.example.mouse3d;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.nio.ByteBuffer;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
+    public static final String TAG = "MainActivity";
     private BluetoothManagement bluetoothManagement;
-    private GyroscopeManager gyroscope;
-    private List<TextView> axisTextViews;
+    private ActivityResultLauncher<Intent> deviceListActivityLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setTitle("Mouse 3D");
+
+        registerDeviceListActivityLauncher();
 
         bluetoothConfig();
 
-        axisTextViews = getAxisTextViews();
-        gyroscopeConfig();
+        Button selectDeviceButton = findViewById(R.id.selectDeviceButton);
+        selectDeviceButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, DeviceListActivity.class);
+            deviceListActivityLauncher.launch(intent);
+        });
 
-        Button leftButton = findViewById(R.id.leftButton);
-        Button rightButton = findViewById(R.id.rightButton);
-        Button resetOrientationButton = findViewById(R.id.resetOrientationButton);
-
-        if (leftButton != null) {
-            leftButton.setOnClickListener(view -> Toast.makeText(MainActivity.this, R.string.leftButton, Toast.LENGTH_SHORT).show());
-        }
-
-        if (rightButton != null) {
-            rightButton.setOnClickListener(view -> Toast.makeText(MainActivity.this, R.string.rightButton, Toast.LENGTH_SHORT).show());
-        }
-
-        if (resetOrientationButton != null) {
-            resetOrientationButton.setOnClickListener(view ->
-                    gyroscope.setRelativeDirections(gyroscope.getCurrentDirections()));
-        }
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == BluetoothManagement.REQUEST_ENABLE_BT) {
             if (resultCode != RESULT_OK) {
                 exitApplicationDisplayingToastWithMessage("Enabling Bluetooth is required for Mouse 3D");
@@ -60,24 +46,30 @@ public class MainActivity extends AppCompatActivity {
                 exitApplicationDisplayingToastWithMessage("Device must be discoverable to pair with potential new devices");
             }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void exitApplicationDisplayingToastWithMessage(String message) {
-        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
-        android.os.Process.killProcess(android.os.Process.myPid());
-        finish();
-    }
+    private void registerDeviceListActivityLauncher() {
+        deviceListActivityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent resultIntent = result.getData();
+                        if (resultIntent != null) {
+                            String address = resultIntent.getExtras()
+                                    .getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        gyroscope.register();
-    }
+                            Log.i(TAG, "Selected device with address: " + address);
+                            bluetoothManagement.setRemoteDevice(address);
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        gyroscope.unregister();
+                            Intent intent = new Intent(MainActivity.this, MouseControlActivity.class);
+                            startActivity(intent);
+                        } else {
+                            //TODO
+                        }
+                    } else {
+                        //TODO
+                    }
+                });
     }
 
     private void bluetoothConfig() {
@@ -86,21 +78,9 @@ public class MainActivity extends AppCompatActivity {
         bluetoothManagement = BluetoothManagement.getInstance();
     }
 
-    private void gyroscopeConfig() {
-        gyroscope = new GyroscopeManager(MainActivity.this);
-        gyroscope.setListener((rx, ry, rz) -> {
-            try {
-                axisTextViews.get(0).setText(String.valueOf((int) (rx)));
-                axisTextViews.get(1).setText(String.valueOf((int) (ry)));
-                axisTextViews.get(2).setText(String.valueOf((int) (rz)));
-                bluetoothManagement.write(ByteBuffer.allocate(12).putFloat(rx).putFloat(ry).putFloat(rz).array());
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        });
-    }
-
-    private List<TextView> getAxisTextViews() {
-        return List.of(findViewById(R.id.xAxisDisplay), findViewById(R.id.yAxisDisplay), findViewById(R.id.zAxisDisplay));
+    public void exitApplicationDisplayingToastWithMessage(String message) {
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+        android.os.Process.killProcess(android.os.Process.myPid());
+        finish();
     }
 }
