@@ -64,7 +64,8 @@ public class ClientThread implements Runnable{
             var mouseEventDto = objectMapper.readValue(message, MouseEventDto.class);
 
             if (mouseEventDto.getAction().equals(MouseAction.MOVE)) {
-                robot.mouseMove(mouseEventDto.getX(), mouseEventDto.getY());
+                Point location = MouseInfo.getPointerInfo().getLocation();
+                robot.mouseMove(location.x + mouseEventDto.getX(), location.y + mouseEventDto.getY());
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();

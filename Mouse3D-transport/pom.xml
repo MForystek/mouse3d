@@ -3,9 +3,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.mouse3d.model</groupId>
-    <artifactId>transport-model</artifactId>
-    <name>transport-model project</name>
+    <groupId>com.mouse3d</groupId>
+    <artifactId>transport</artifactId>
+    <name>Mouse3D-transport</name>
     <description>Transport model library</description>
     <version>1.0</version>
 

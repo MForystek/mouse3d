@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>com.mouse3d</groupId>
-    <artifactId>bluetooth-server</artifactId>
+    <artifactId>desktop</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>bluetooth-server</name>
+    <name>Mouse3D-desktop</name>
     <description>bluetooth-server</description>
 
     <properties>
@@ -23,8 +23,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.mouse3d.model</groupId>
-            <artifactId>transport-model</artifactId>
+            <groupId>com.mouse3d</groupId>
+            <artifactId>transport</artifactId>
             <version>1.0</version>
         </dependency>
 
