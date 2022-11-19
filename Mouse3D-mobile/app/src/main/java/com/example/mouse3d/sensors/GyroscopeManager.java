@@ -1,4 +1,4 @@
-package com.example.mouse3d;
+package com.example.mouse3d.sensors;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -24,7 +24,7 @@ public class GyroscopeManager {
     private List<Float> currentDirections;
 
     @SuppressWarnings("deprecation")
-    GyroscopeManager(Context context) {
+    public GyroscopeManager(Context context) {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         relativeDirections = List.of(0f, 0f, 0f);

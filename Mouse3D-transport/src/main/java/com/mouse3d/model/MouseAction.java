@@ -4,5 +4,6 @@ public enum MouseAction {
     MOVE,
     LEFT_CLICK,
     RIGHT_CLICK,
+    MIDDLE_CLICK,
     SCROLL
 }

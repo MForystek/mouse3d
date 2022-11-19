@@ -1,35 +1,36 @@
-package com.example.mouse3d;
+package com.example.mouse3d.bluetooth;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.example.mouse3d.activities.MainActivity;
 import com.example.mouse3d.exception.NoBluetoothManagerException;
 import com.example.mouse3d.exception.NoMainActivityReferenceException;
 
+import java.util.Set;
+
 public class BluetoothManagement {
-    public static final int REQUEST_ENABLE_BT = 1;
-    public static final int REQUEST_DISCOVERABLE_BT = 2;
+    public static final int REQUEST_DISCOVERABLE_BT = 1;
     public static final int DISCOVERY_TIME_SECONDS = 120;
 
     private static MainActivity mainActivityReference;
     private static BluetoothManager bluetoothManager;
     private static BluetoothManagement instance;
-    private static BluetoothDevice actualRemoteDevice;
 
-    private BluetoothAdapter bluetoothAdapter;
+    private final BluetoothAdapter bluetoothAdapter;
+    private BluetoothDevice actualRemoteDevice;
 
     public static BluetoothManagement getInstance() {
         if (bluetoothManager == null) {
             throw new NoBluetoothManagerException();
         }
-
         if (mainActivityReference == null) {
             throw new NoMainActivityReferenceException();
         }
-
         if (instance == null) {
             instance = new BluetoothManagement();
         }
@@ -44,12 +45,24 @@ public class BluetoothManagement {
         BluetoothManagement.mainActivityReference = mouseControlActivityReference;
     }
 
-    public void setRemoteDevice(String deviceName) {
-        actualRemoteDevice = this.bluetoothAdapter.getRemoteDevice(deviceName);
+    @SuppressLint("MissingPermission")
+    public void doDiscovery() {
+        if (bluetoothAdapter.isDiscovering()) {
+            bluetoothAdapter.cancelDiscovery();
+        }
+        bluetoothAdapter.startDiscovery();
     }
 
-    public BluetoothDevice getActualRemoteDevice() {
-        return actualRemoteDevice;
+    @SuppressLint("MissingPermission")
+    public void cancelDiscovery() {
+        if (bluetoothAdapter != null) {
+            bluetoothAdapter.cancelDiscovery();
+        }
+    }
+
+    @SuppressWarnings("MissingPermission")
+    public Set<BluetoothDevice> getBondedDevices() {
+        return bluetoothAdapter.getBondedDevices();
     }
 
     private BluetoothManagement() {
@@ -59,25 +72,12 @@ public class BluetoothManagement {
 
     private void configureBluetooth() {
         ensureBluetoothExists();
-        ensureBluetoothIsEnabled();
         enableBeingDiscoverable();
     }
 
     private void ensureBluetoothExists() {
         if (bluetoothAdapter == null) {
             mainActivityReference.exitApplicationDisplayingToastWithMessage("Bluetooth is required for Mouse 3D");
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    private void ensureBluetoothIsEnabled() {
-        if (!bluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            try {
-                mainActivityReference.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            } catch (SecurityException e) {
-                Toast.makeText(mainActivityReference, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
@@ -92,4 +92,11 @@ public class BluetoothManagement {
         }
     }
 
+    public void setRemoteDevice(String deviceName) {
+        actualRemoteDevice = this.bluetoothAdapter.getRemoteDevice(deviceName);
+    }
+
+    public BluetoothDevice getActualRemoteDevice() {
+        return actualRemoteDevice;
+    }
 }

@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.microedition.io.StreamConnection;
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.io.IOException;
 
 @Slf4j
@@ -63,7 +64,18 @@ public class ClientThread implements Runnable{
         try {
             var mouseEventDto = objectMapper.readValue(message, MouseEventDto.class);
 
-            if (mouseEventDto.getAction().equals(MouseAction.MOVE)) {
+            if (mouseEventDto.getAction().equals(MouseAction.LEFT_CLICK)) {
+                robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            } else if (mouseEventDto.getAction().equals(MouseAction.MIDDLE_CLICK)) {
+                robot.mousePress(InputEvent.BUTTON2_DOWN_MASK);
+                robot.mousePress(InputEvent.BUTTON2_DOWN_MASK);
+            } else if (mouseEventDto.getAction().equals(MouseAction.RIGHT_CLICK)) {
+                robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
+                robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
+            } else if (mouseEventDto.getAction().equals(MouseAction.SCROLL)) {
+                robot.mouseWheel(mouseEventDto.getY());
+            } else if (mouseEventDto.getAction().equals(MouseAction.MOVE)) {
                 Point location = MouseInfo.getPointerInfo().getLocation();
                 robot.mouseMove(location.x + mouseEventDto.getX(), location.y + mouseEventDto.getY());
             }

@@ -1,4 +1,4 @@
-package com.example.mouse3d;
+package com.example.mouse3d.bluetooth;
 
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
@@ -15,49 +15,19 @@ import java.util.UUID;
 
 //TODO: run on thread or no ?
 public class BluetoothClient {
-    private final BluetoothDevice bluetoothDevice;
-    private BluetoothSocket bluetoothSocket;
-    private OutputStream outputStream;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     public static final String TAG = "BluetoothClient";
     public static final UUID SERVER_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+    private final ObjectMapper objectMapper;
+    private final BluetoothDevice bluetoothDevice;
+
+    private BluetoothSocket bluetoothSocket;
+    private OutputStream outputStream;
+
     public BluetoothClient(BluetoothDevice bluetoothDevice) throws IOException {
         this.bluetoothDevice = bluetoothDevice;
+        this.objectMapper = new ObjectMapper();
         initConnection();
-    }
-
-    public void close() {
-        try {
-            outputStream.close();
-            bluetoothSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean send(MouseEventDto mouseEventDto) {
-        try {
-           String json = objectMapper.writeValueAsString(mouseEventDto);
-            return send(json.getBytes());
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-      return false;
-    }
-
-    private boolean send(byte[] bytes) {
-        if (bluetoothSocket.isConnected()) {
-            try {
-                outputStream.write(bytes);
-                return true;
-            } catch (IOException e) {
-                Log.e(TAG, "Failed to send data");
-            }
-        }
-        return false;
     }
 
     @SuppressLint("MissingPermission")
@@ -75,6 +45,34 @@ public class BluetoothClient {
             e.printStackTrace();
             Log.e(TAG, "Failed to initialize connection");
             throw e;
+        }
+    }
+
+    public void send(MouseEventDto mouseEventDto) {
+        try {
+           String json = objectMapper.writeValueAsString(mouseEventDto);
+           send(json.getBytes());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void send(byte[] bytes) {
+        if (bluetoothSocket.isConnected()) {
+            try {
+                outputStream.write(bytes);
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to send data");
+            }
+        }
+    }
+
+    public void close() {
+        try {
+            outputStream.close();
+            bluetoothSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
