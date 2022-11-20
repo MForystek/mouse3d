@@ -4,9 +4,14 @@ import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.widget.Toast;
 
+import com.example.mouse3d.R;
+import com.example.mouse3d.activities.DeviceListActivity;
 import com.example.mouse3d.activities.MainActivity;
 import com.example.mouse3d.exception.NoBluetoothManagerException;
 import com.example.mouse3d.exception.NoMainActivityReferenceException;
@@ -14,10 +19,10 @@ import com.example.mouse3d.exception.NoMainActivityReferenceException;
 import java.util.Set;
 
 public class BluetoothManagement {
-    public static final int REQUEST_DISCOVERABLE_BT = 1;
-    public static final int DISCOVERY_TIME_SECONDS = 120;
+    public static final int REQUEST_ENABLE_BT = 1;
 
     private static MainActivity mainActivityReference;
+    private static DeviceListActivity deviceListActivityReference;
     private static BluetoothManager bluetoothManager;
     private static BluetoothManagement instance;
 
@@ -44,6 +49,30 @@ public class BluetoothManagement {
     public static void setMainActivityReference(MainActivity mouseControlActivityReference) {
         BluetoothManagement.mainActivityReference = mouseControlActivityReference;
     }
+
+    public static void setDeviceListActivityReference(DeviceListActivity deviceListActivityReference) {
+        BluetoothManagement.deviceListActivityReference = deviceListActivityReference;
+    }
+
+    @SuppressLint("MissingPermission")
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                //if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                    String deviceNameAndAddress = device.getName() + "\n" + device.getAddress();
+                    deviceListActivityReference.getNewDevicesArrayAdapter().add(deviceNameAndAddress);
+                //}
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                if (deviceListActivityReference.getNewDevicesArrayAdapter().getCount() == 0) {
+                    String noDevices = deviceListActivityReference.getResources().getText(R.string.none_found).toString();
+                    deviceListActivityReference.getNewDevicesArrayAdapter().add(noDevices);
+                }
+            }
+        }
+    };
 
     @SuppressLint("MissingPermission")
     public void doDiscovery() {
@@ -72,7 +101,7 @@ public class BluetoothManagement {
 
     private void configureBluetooth() {
         ensureBluetoothExists();
-        enableBeingDiscoverable();
+        ensureBluetoothIsEnabled();
     }
 
     private void ensureBluetoothExists() {
@@ -82,13 +111,14 @@ public class BluetoothManagement {
     }
 
     @SuppressWarnings("deprecation")
-    private void enableBeingDiscoverable() {
-        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVERY_TIME_SECONDS);
-        try {
-            mainActivityReference.startActivityForResult(discoverableIntent, REQUEST_DISCOVERABLE_BT);
-        } catch (SecurityException e) {
-            Toast.makeText(mainActivityReference, e.getMessage(), Toast.LENGTH_LONG).show();
+    private void ensureBluetoothIsEnabled() {
+        if (!bluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            try {
+                mainActivityReference.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            } catch (SecurityException e) {
+                Toast.makeText(mainActivityReference, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -98,5 +128,9 @@ public class BluetoothManagement {
 
     public BluetoothDevice getActualRemoteDevice() {
         return actualRemoteDevice;
+    }
+
+    public BroadcastReceiver getReceiver() {
+        return receiver;
     }
 }

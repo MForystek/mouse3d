@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.mouse3d.R;
+import com.example.mouse3d.Util;
 import com.example.mouse3d.bluetooth.BluetoothClient;
 import com.example.mouse3d.bluetooth.BluetoothManagement;
 import com.example.mouse3d.sensors.GyroscopeManager;
@@ -31,7 +32,8 @@ public class MouseControlActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mouse_control);
-        setTitle("Mouse 3D");
+
+        Util.hideNavigationBar(getWindow());
 
         ConstraintLayout backgroundLayout = findViewById(R.id.mouse_control_layout);
         Button leftButton = findViewById(R.id.leftButton);
@@ -79,7 +81,9 @@ public class MouseControlActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         gyroscope.unregister();
-        bluetoothClient.close();
+        if (bluetoothClient != null) {
+            bluetoothClient.close();
+        }
     }
 
     private List<TextView> getAxisTextViews() {
@@ -128,7 +132,6 @@ public class MouseControlActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //gyroscope.setRelativeDirections(gyroscope.getCurrentDirections());
     }
 
     private int normalise(int value) {
