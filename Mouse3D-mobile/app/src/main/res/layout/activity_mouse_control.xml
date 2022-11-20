@@ -2,105 +2,104 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mouse_control_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/mouse_control_layout"
+    android:background="@drawable/background_gradient"
     tools:context=".activities.MouseControlActivity">
-
-    <TextView
-        android:id="@+id/xAxisDisplay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="128dp"
-        android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
-
-    <TextView
-        android:id="@+id/yAxisDisplay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@+id/xAxisDisplay" />
-
-    <TextView
-        android:id="@+id/zAxisDisplay"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@+id/yAxisDisplay" />
 
     <Button
         android:id="@+id/leftButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/button_border"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:text="@string/leftButton"
-        android:textColor="@android:color/background_light"
         android:textSize="24sp"
-        app:layout_constraintWidth_percent="0.37"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/middleButton"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.38"
+        android:contentDescription="@string/leftButton" />
 
     <Button
         android:id="@+id/rightButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/button_border"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
         android:text="@string/rightButton"
-        android:textColor="@android:color/background_light"
         android:textSize="24sp"
-        app:layout_constraintWidth_percent="0.37"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toRightOf="@id/middleButton"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.375"
+        android:contentDescription="@string/rightButton" />
 
     <Button
         android:id="@+id/middleButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/button_border"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
         android:text="@string/middleButton"
-        android:textColor="@android:color/background_light"
         android:textSize="20sp"
-        app:layout_constraintWidth_percent="0.25"
-        app:layout_constraintHeight_percent="0.845"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHeight_percent="0.85"
         app:layout_constraintLeft_toRightOf="@id/leftButton"
         app:layout_constraintRight_toLeftOf="@id/rightButton"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_percent="0.25"
+        android:contentDescription="@string/middleButton" />
 
     <Button
         android:id="@+id/resetOrientationButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/button_border"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
         android:text="@string/resetOrientationButton"
-        android:textColor="@android:color/background_light"
         android:textSize="20sp"
-        app:layout_constraintWidth_percent="0.25"
-        app:layout_constraintHeight_percent="0.15"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/middleButton"
+        app:layout_constraintHeight_percent="0.15"
         app:layout_constraintLeft_toRightOf="@id/leftButton"
         app:layout_constraintRight_toLeftOf="@id/rightButton"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@id/middleButton"
+        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintWidth_percent="0.25"
+        android:contentDescription="@string/resetOrientationButton" />
+
+    <TextView
+        android:id="@+id/xAxisDisplay"
+        android:layout_width="0sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="128dp"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/middleButton"
+        app:layout_constraintRight_toRightOf="@id/middleButton" />
+
+    <TextView
+        android:id="@+id/yAxisDisplay"
+        android:layout_width="0sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/xAxisDisplay"
+        app:layout_constraintLeft_toLeftOf="@id/middleButton"
+        app:layout_constraintRight_toRightOf="@id/middleButton" />
+
+    <TextView
+        android:id="@+id/zAxisDisplay"
+        android:layout_width="0sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/yAxisDisplay"
+        app:layout_constraintLeft_toLeftOf="@id/middleButton"
+        app:layout_constraintRight_toRightOf="@id/middleButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

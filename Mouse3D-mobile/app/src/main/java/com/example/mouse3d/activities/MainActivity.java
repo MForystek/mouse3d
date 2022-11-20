@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mouse3d.R;
+import com.example.mouse3d.Util;
 import com.example.mouse3d.bluetooth.BluetoothManagement;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,21 +28,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Util.hideNavigationBar(getWindow());
         bluetoothConfig();
         registerDeviceListActivityLauncher();
-
-        Button selectDeviceButton = findViewById(R.id.selectDeviceButton);
-        selectDeviceButton.setOnClickListener(view -> {
-            Intent intent = new Intent(this, DeviceListActivity.class);
-            deviceListActivityLauncher.launch(intent);
-        });
-
+        initializeComponents();
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BluetoothManagement.REQUEST_DISCOVERABLE_BT) {
-            if (resultCode == RESULT_CANCELED) {
-                exitApplicationDisplayingToastWithMessage("Device must be discoverable to pair with potential new devices");
+        if (requestCode == BluetoothManagement.REQUEST_ENABLE_BT) {
+            if (resultCode != RESULT_OK) {
+                exitApplicationDisplayingToastWithMessage("Enabling Bluetooth is required for Mouse 3D");
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -70,6 +68,16 @@ public class MainActivity extends AppCompatActivity {
                         exitApplicationDisplayingToastWithMessage("Some error has occured");
                     }
                 });
+    }
+
+    private void initializeComponents() {
+        View selectDeviceButtonWrapper = findViewById(R.id.selectDeviceButtonWrapper);
+        Button selectDeviceButton = findViewById(R.id.selectDeviceButton);
+        selectDeviceButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, DeviceListActivity.class);
+            deviceListActivityLauncher.launch(intent);
+        });
+        selectDeviceButtonWrapper.setOnClickListener(view -> selectDeviceButton.callOnClick());
     }
 
     public void exitApplicationDisplayingToastWithMessage(String message) {
