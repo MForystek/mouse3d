@@ -61,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(MainActivity.this, MouseControlActivity.class);
                             startActivity(intent);
-                        } else {
-                            exitApplicationDisplayingToastWithMessage("Some error has occured");
                         }
                     } else {
                         exitApplicationDisplayingToastWithMessage("Some error has occured");

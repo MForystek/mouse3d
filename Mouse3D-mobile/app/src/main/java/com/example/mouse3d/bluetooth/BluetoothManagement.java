@@ -1,13 +1,13 @@
 package com.example.mouse3d.bluetooth;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.example.mouse3d.R;
@@ -22,7 +22,6 @@ public class BluetoothManagement {
     public static final int REQUEST_ENABLE_BT = 1;
 
     private static MainActivity mainActivityReference;
-    private static DeviceListActivity deviceListActivityReference;
     private static BluetoothManager bluetoothManager;
     private static BluetoothManagement instance;
 
@@ -50,48 +49,19 @@ public class BluetoothManagement {
         BluetoothManagement.mainActivityReference = mouseControlActivityReference;
     }
 
-    public static void setDeviceListActivityReference(DeviceListActivity deviceListActivityReference) {
-        BluetoothManagement.deviceListActivityReference = deviceListActivityReference;
-    }
-
     @SuppressLint("MissingPermission")
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                //if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    String deviceNameAndAddress = device.getName() + "\n" + device.getAddress();
-                    deviceListActivityReference.getNewDevicesArrayAdapter().add(deviceNameAndAddress);
-                //}
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                if (deviceListActivityReference.getNewDevicesArrayAdapter().getCount() == 0) {
-                    String noDevices = deviceListActivityReference.getResources().getText(R.string.none_found).toString();
-                    deviceListActivityReference.getNewDevicesArrayAdapter().add(noDevices);
-                }
+    public void fillArrayWithPairedDevices(ArrayAdapter<String> pairedDevicesArrayAdapter, Activity activity) {
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                //TODO show only devices with correct profile (e.g. no audio, no mouse, etc.)
+                String deviceNameAndAddress = device.getName() + "\n" + device.getAddress();
+                pairedDevicesArrayAdapter.add(deviceNameAndAddress);
             }
+        } else {
+            //TODO test how it looks
+            activity.findViewById(R.id.nothing_paired_textview).setVisibility(View.VISIBLE);
         }
-    };
-
-    @SuppressLint("MissingPermission")
-    public void doDiscovery() {
-        if (bluetoothAdapter.isDiscovering()) {
-            bluetoothAdapter.cancelDiscovery();
-        }
-        bluetoothAdapter.startDiscovery();
-    }
-
-    @SuppressLint("MissingPermission")
-    public void cancelDiscovery() {
-        if (bluetoothAdapter != null) {
-            bluetoothAdapter.cancelDiscovery();
-        }
-    }
-
-    @SuppressWarnings("MissingPermission")
-    public Set<BluetoothDevice> getBondedDevices() {
-        return bluetoothAdapter.getBondedDevices();
     }
 
     private BluetoothManagement() {
@@ -128,9 +98,5 @@ public class BluetoothManagement {
 
     public BluetoothDevice getActualRemoteDevice() {
         return actualRemoteDevice;
-    }
-
-    public BroadcastReceiver getReceiver() {
-        return receiver;
     }
 }
