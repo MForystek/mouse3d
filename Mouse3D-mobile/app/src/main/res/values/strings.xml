@@ -12,4 +12,7 @@
     <string name="title_paired_devices">Paired Devices</string>
     <string name="back_button">Back</string>
     <string name="nothing_paired">Nothing paired</string>
+    <string name="pair_mode_button">Pair</string>
+    <string name="cancel_button">cancel</string>
+    <string name="exitButton">exit</string>
 </resources>
