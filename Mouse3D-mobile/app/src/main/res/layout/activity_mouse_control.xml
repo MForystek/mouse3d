@@ -5,8 +5,37 @@
     android:id="@+id/mouse_control_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_gradient"
+    android:background="@drawable/gradient_primary_background"
     tools:context=".activities.MouseControlActivity">
+
+    <TextView
+        android:id="@+id/device_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:padding="40dp"
+        android:background="@drawable/gradient_primary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/cancel_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/cancel_button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/cancel_button"
+        android:textSize="20sp"
+        android:background="@drawable/gradient_primary_clickable"
+        app:layout_constraintBottom_toTopOf="@id/middleButton"
+        app:layout_constraintLeft_toRightOf="@id/leftButton"
+        app:layout_constraintRight_toLeftOf="@id/rightButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintWidth_percent="0.25"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/leftButton"
@@ -16,12 +45,15 @@
         android:paddingEnd="10dp"
         android:text="@string/leftButton"
         android:textSize="24sp"
+        android:background="@drawable/gradient_primary_clickable"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/middleButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
         app:layout_constraintWidth_percent="0.38"
+        app:layout_constraintHeight_percent="0.7"
         android:contentDescription="@string/leftButton" />
 
     <Button
@@ -30,12 +62,15 @@
         android:layout_height="0dp"
         android:text="@string/rightButton"
         android:textSize="24sp"
+        android:background="@drawable/gradient_primary_clickable"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toRightOf="@id/middleButton"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
         app:layout_constraintWidth_percent="0.375"
+        app:layout_constraintHeight_percent="0.7"
         android:contentDescription="@string/rightButton" />
 
     <Button
@@ -44,13 +79,14 @@
         android:layout_height="0dp"
         android:text="@string/middleButton"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_percent="0.85"
+        android:background="@drawable/gradient_primary_clickable"
+        app:layout_constraintBottom_toTopOf="@id/resetOrientationButton"
         app:layout_constraintLeft_toRightOf="@id/leftButton"
         app:layout_constraintRight_toLeftOf="@id/rightButton"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="1.0"
         app:layout_constraintWidth_percent="0.25"
+        app:layout_constraintHeight_percent="0.4"
         android:contentDescription="@string/middleButton" />
 
     <Button
@@ -59,47 +95,14 @@
         android:layout_height="0dp"
         android:text="@string/resetOrientationButton"
         android:textSize="20sp"
+        android:background="@drawable/gradient_primary_clickable"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_percent="0.15"
         app:layout_constraintLeft_toRightOf="@id/leftButton"
         app:layout_constraintRight_toLeftOf="@id/rightButton"
-        app:layout_constraintTop_toBottomOf="@id/middleButton"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         app:layout_constraintWidth_percent="0.25"
         android:contentDescription="@string/resetOrientationButton" />
-
-    <TextView
-        android:id="@+id/xAxisDisplay"
-        android:layout_width="0sp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="128dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/middleButton"
-        app:layout_constraintRight_toRightOf="@id/middleButton" />
-
-    <TextView
-        android:id="@+id/yAxisDisplay"
-        android:layout_width="0sp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@+id/xAxisDisplay"
-        app:layout_constraintLeft_toLeftOf="@id/middleButton"
-        app:layout_constraintRight_toRightOf="@id/middleButton" />
-
-    <TextView
-        android:id="@+id/zAxisDisplay"
-        android:layout_width="0sp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@+id/yAxisDisplay"
-        app:layout_constraintLeft_toLeftOf="@id/middleButton"
-        app:layout_constraintRight_toRightOf="@id/middleButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

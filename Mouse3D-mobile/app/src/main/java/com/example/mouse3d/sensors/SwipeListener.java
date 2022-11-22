@@ -48,7 +48,7 @@ public class SwipeListener implements View.OnTouchListener {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         //TODO without it middle click is not possible but with it swiping causes million middle clicks per second
-        //v.performClick();
+        //v.callOnClick();
         return gestureDetector.onTouchEvent(event);
     }
 }
