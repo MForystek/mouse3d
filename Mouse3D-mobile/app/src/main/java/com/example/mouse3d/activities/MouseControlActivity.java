@@ -1,14 +1,17 @@
 package com.example.mouse3d.activities;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.mouse3d.R;
+import com.example.mouse3d.Utils;
 import com.example.mouse3d.bluetooth.BluetoothClient;
 import com.example.mouse3d.bluetooth.BluetoothManagement;
 import com.example.mouse3d.sensors.GyroscopeManager;
@@ -18,46 +21,22 @@ import com.mouse3d.model.MouseAction;
 import com.mouse3d.model.MouseEventDto;
 
 import java.io.IOException;
-import java.util.List;
 
 public class MouseControlActivity extends AppCompatActivity {
     public static final String TAG = "MouseControlActivity";
 
     private BluetoothClient bluetoothClient;
     private GyroscopeManager gyroscope;
-    private List<TextView> axisTextViews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mouse_control);
-        setTitle("Mouse 3D");
-
-        ConstraintLayout backgroundLayout = findViewById(R.id.mouse_control_layout);
-        Button leftButton = findViewById(R.id.leftButton);
-        Button rightButton = findViewById(R.id.rightButton);
-        Button middleButton = findViewById(R.id.middleButton);
-        Button resetOrientationButton = findViewById(R.id.resetOrientationButton);
-        new SwipeListener(backgroundLayout);
-        new SwipeListener(middleButton);
-
-        axisTextViews = getAxisTextViews();
+        Utils.hideNavigationBar(getWindow());
 
         initBluetoothClient();
         gyroscopeConfig();
-
-        if (leftButton != null) {
-            leftButton.setOnClickListener(view -> UserAction.LEFT_CLICK.value = 1);
-        }
-        if (rightButton != null) {
-            rightButton.setOnClickListener(view -> UserAction.RIGHT_CLICK.value = 1);
-        }
-        if (middleButton != null) {
-            middleButton.setOnClickListener(view -> UserAction.MIDDLE_CLICK.value = 1);
-        }
-        if (resetOrientationButton != null) {
-            resetOrientationButton.setOnClickListener(view -> gyroscope.setRelativeDirections(gyroscope.getCurrentDirections()));
-        }
+        initializeComponents();
     }
 
     private void initBluetoothClient() {
@@ -69,35 +48,14 @@ public class MouseControlActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        gyroscope.register();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        gyroscope.unregister();
-        bluetoothClient.close();
-    }
-
-    private List<TextView> getAxisTextViews() {
-        return List.of(findViewById(R.id.xAxisDisplay), findViewById(R.id.yAxisDisplay), findViewById(R.id.zAxisDisplay));
-    }
-
     private void gyroscopeConfig() {
         gyroscope = new GyroscopeManager(MouseControlActivity.this);
         gyroscope.setListener((rx, ry, rz) -> {
             try {
-                MouseEventDto mouseEventDto = new MouseEventDto();;
+                MouseEventDto mouseEventDto = new MouseEventDto();
 
                 int x_norm = normalise((int) rx);
                 int y_norm = normalise((int) ry);
-
-                axisTextViews.get(0).setText(String.valueOf(x_norm));
-                axisTextViews.get(1).setText(String.valueOf(y_norm));
-                axisTextViews.get(2).setText(String.valueOf((int) (rz)));
 
                 if (UserAction.LEFT_CLICK.value != 0) {
                     mouseEventDto.setAction(MouseAction.LEFT_CLICK);
@@ -128,7 +86,32 @@ public class MouseControlActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //gyroscope.setRelativeDirections(gyroscope.getCurrentDirections());
+    }
+
+    @SuppressLint("MissingPermission")
+    private void initializeComponents() {
+        TextView deviceLabel = findViewById(R.id.device_label);
+
+        Button leftButton = findViewById(R.id.leftButton);
+        Button rightButton = findViewById(R.id.rightButton);
+        Button middleButton = findViewById(R.id.middleButton);
+        Button resetOrientationButton = findViewById(R.id.resetOrientationButton);
+        Button cancelButton = findViewById(R.id.cancel_button);
+
+        BluetoothDevice bluetoothDevice = BluetoothManagement.getInstance().getActualRemoteDevice();
+        String deviceNameAndAddress = bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress();
+        deviceLabel.setText(deviceNameAndAddress);
+        new SwipeListener(middleButton);
+
+        leftButton.setOnClickListener(view -> UserAction.LEFT_CLICK.value = 1);
+        rightButton.setOnClickListener(view -> UserAction.RIGHT_CLICK.value = 1);
+        middleButton.setOnClickListener(view -> UserAction.MIDDLE_CLICK.value = 1);
+        resetOrientationButton.setOnClickListener(view -> gyroscope.setRelativeDirections(gyroscope.getCurrentDirections()));
+        cancelButton.setOnClickListener(view -> {
+            setResult(Activity.RESULT_OK);
+            onPause();
+            finish();
+        });
     }
 
     private int normalise(int value) {
@@ -145,5 +128,20 @@ public class MouseControlActivity extends AppCompatActivity {
             return max_value;
         }
         return value;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        gyroscope.register();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gyroscope.unregister();
+        if (bluetoothClient != null) {
+            bluetoothClient.close();
+        }
     }
 }

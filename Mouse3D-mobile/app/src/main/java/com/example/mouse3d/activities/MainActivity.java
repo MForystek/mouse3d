@@ -7,13 +7,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mouse3d.R;
+import com.example.mouse3d.Utils;
 import com.example.mouse3d.bluetooth.BluetoothManagement;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,22 +25,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Utils.hideNavigationBar(getWindow());
 
         bluetoothConfig();
         registerDeviceListActivityLauncher();
-
-        Button selectDeviceButton = findViewById(R.id.selectDeviceButton);
-        selectDeviceButton.setOnClickListener(view -> {
-            Intent intent = new Intent(this, DeviceListActivity.class);
-            deviceListActivityLauncher.launch(intent);
-        });
-
+        initializeComponents();
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BluetoothManagement.REQUEST_DISCOVERABLE_BT) {
-            if (resultCode == RESULT_CANCELED) {
-                exitApplicationDisplayingToastWithMessage("Device must be discoverable to pair with potential new devices");
+        if (requestCode == BluetoothManagement.REQUEST_ENABLE_BT) {
+            if (resultCode != RESULT_OK) {
+                Utils.exitApplicationDisplayingToastWithMessage(this, "Enabling Bluetooth is required for Mouse 3D");
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -63,18 +59,25 @@ public class MainActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(MainActivity.this, MouseControlActivity.class);
                             startActivity(intent);
-                        } else {
-                            exitApplicationDisplayingToastWithMessage("Some error has occured");
                         }
                     } else {
-                        exitApplicationDisplayingToastWithMessage("Some error has occured");
+                        Utils.exitApplicationDisplayingToastWithMessage(this, "Some error has occured");
                     }
                 });
     }
 
-    public void exitApplicationDisplayingToastWithMessage(String message) {
-        Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
-        android.os.Process.killProcess(android.os.Process.myPid());
-        finish();
+    private void initializeComponents() {
+        Button selectDeviceButton = findViewById(R.id.selectDeviceButton);
+        Button exitButton = findViewById(R.id.exitButton);
+
+        selectDeviceButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, DeviceListActivity.class);
+            deviceListActivityLauncher.launch(intent);
+        });
+        exitButton.setOnClickListener(view -> {
+            setResult(RESULT_OK);
+            android.os.Process.killProcess(android.os.Process.myPid());
+            finish();
+        });
     }
 }
