@@ -16,17 +16,21 @@ public class MainWindow extends JFrame {
     private JButton stopServerButton;
     private ServerThread serverThread;
 
+    public static void main(String [] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        new MainWindow();
+    }
+
     public MainWindow() {
         super("Mouse3D");
         setContentPane(this.mainPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(new Dimension(300, 300));
+        int windowWidth = 250;
+        int windowHeight = (windowWidth / 16) * 10;
+        setSize(new Dimension(windowWidth, windowHeight));
+        setResizable(false);
         setVisible(true);
         addListeners();
-    }
-
-    public static void main(String [] args) {
-        new MainWindow();
     }
 
     private void addListeners() {
