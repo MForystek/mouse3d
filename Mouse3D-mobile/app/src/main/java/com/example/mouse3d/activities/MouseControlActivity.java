@@ -87,6 +87,7 @@ public class MouseControlActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        gyroscope.setRelativeDirections(gyroscope.getCurrentDirections());
     }
 
     @SuppressLint("MissingPermission")
