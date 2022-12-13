@@ -13,10 +13,9 @@ import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
-public class ClientThread implements Runnable{
+public class ClientThread extends Thread{
 
     private final StreamConnection mConnection;
-    private final ScreenManager screenManager;
     private Robot robot;
 
     private static final int EXIT_COMMAND = -1;
@@ -24,12 +23,17 @@ public class ClientThread implements Runnable{
     private final ObjectMapper objectMapper = new ObjectMapper();
     private int height;
     private int width;
+    private volatile boolean exit = false;
 
     @Override
     public void run() {
         setResolution();
         initializeRobot();
         processClientRequests();
+    }
+
+    public void terminate() {
+        exit = true;
     }
 
     private void setResolution() {
@@ -53,7 +57,7 @@ public class ClientThread implements Runnable{
             var buffer = new byte[BUFFER_SIZE];
             int bytes;
 
-            while (true) {
+            while (!exit) {
                 bytes = inputStream.read(buffer);
                 if (bytes == EXIT_COMMAND) {
                     log.info("Connection finished");
@@ -73,8 +77,8 @@ public class ClientThread implements Runnable{
 
             switch (mouseEventDto.getAction()) {
                 case MOVE: {
-                    System.out.println("RAW: " + mouseEventDto.getX() + ":" + mouseEventDto.getY());
-                    System.out.println(scaleWidth(mouseEventDto.getX()) + ":" + scaleHeight(mouseEventDto.getY()));
+                    log.info("Raw data: {} : {}", mouseEventDto.getX(), mouseEventDto.getY());
+                    log.info("Scaled data: {} : {}", scaleWidth(mouseEventDto.getX()), scaleHeight(mouseEventDto.getY()));
                     robot.mouseMove(scaleWidth(mouseEventDto.getX()), scaleHeight(mouseEventDto.getY()));
                 }
                     break;

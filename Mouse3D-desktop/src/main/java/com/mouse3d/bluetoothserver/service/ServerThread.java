@@ -18,8 +18,7 @@ import java.io.IOException;
 public class ServerThread extends Thread {
     public static final String URL_PATTERN = "btspp://localhost:%s;name=%s";
     private final BluetoothServerConfig config;
-    private final ScreenManager screenManager;
-    private volatile boolean exit = false;
+    private ClientThread clientThread;
 
     @Override
     public void run() {
@@ -47,22 +46,28 @@ public class ServerThread extends Thread {
     }
 
     private void waitForClients(StreamConnectionNotifier notifier) {
-        while (!exit) {
+        while (true) {
             try {
                 log.info("Waiting for clients to connect ...");
                 var connection = notifier.acceptAndOpen();
-                new Thread(new ClientThread(connection, screenManager)).start();
+                clientThread = new ClientThread(connection);
+                clientThread.start();
                 Thread.sleep(500);
             } catch (IOException e) {
                 e.printStackTrace();
                 break;
             } catch (InterruptedException e) {
-                exit = true;
+                try {
+                    if (clientThread != null) {
+                        clientThread.terminate();
+                        clientThread = null;
+                    }
+                    notifier.close();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
             }
         }
         log.info("Terminated");
-    }
-    public void terminate() {
-        exit = true;
     }
 }

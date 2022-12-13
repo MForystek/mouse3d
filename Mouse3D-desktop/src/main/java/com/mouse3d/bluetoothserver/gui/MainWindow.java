@@ -3,7 +3,6 @@ package com.mouse3d.bluetoothserver.gui;
 import com.mouse3d.bluetoothserver.config.BluetoothServerConfig;
 import com.mouse3d.bluetoothserver.exception.BluetoothException;
 import com.mouse3d.bluetoothserver.exception.BluetoothTurnedOfException;
-import com.mouse3d.bluetoothserver.service.ScreenManager;
 import com.mouse3d.bluetoothserver.service.ServerThread;
 
 import javax.swing.*;
@@ -15,19 +14,14 @@ public class MainWindow extends JFrame {
     private JButton startServerButton;
     private JPanel mainPanel;
     private JButton stopServerButton;
-    private JList monitorList;
     private ServerThread serverThread;
-    private ScreenManager screenManager;
 
     public MainWindow() {
         super("Mouse3D");
         setContentPane(this.mainPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(new Dimension(500, 500));
+        setSize(new Dimension(300, 300));
         setVisible(true);
-        initMonitorList();
-        screenManager = new ScreenManager();
-        screenManager.setGraphicsDevice(getDefaultGraphicsDevice());
         addListeners();
     }
 
@@ -46,14 +40,6 @@ public class MainWindow extends JFrame {
                 stopServer();
             }
         });
-        monitorList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent mouseEvent) {
-                var list = (JList) mouseEvent.getSource();
-                int index = list.locationToIndex(mouseEvent.getPoint());
-                screenManager.setGraphicsDevice(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[index]);
-            }
-        });
     }
 
     private void restartServer() {
@@ -70,7 +56,7 @@ public class MainWindow extends JFrame {
             }
         };
 
-        serverThread = new ServerThread(buildConfig(), screenManager);
+        serverThread = new ServerThread(buildConfig());
         serverThread.setUncaughtExceptionHandler(handler);
         serverThread.start();
     }
@@ -79,18 +65,6 @@ public class MainWindow extends JFrame {
         if (serverThread != null) {
             serverThread.interrupt();
         }
-    }
-
-    private void initMonitorList() {
-        var defaultListModel = new DefaultListModel<GraphicsDevice>();
-        for (var graphicsDevice: GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
-            defaultListModel.addElement(graphicsDevice);
-        }
-        monitorList.setModel(defaultListModel);
-    }
-
-    private GraphicsDevice getDefaultGraphicsDevice() {
-        return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
     }
 
     private BluetoothServerConfig buildConfig() {
