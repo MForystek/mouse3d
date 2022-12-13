@@ -22,12 +22,20 @@ public class ClientThread implements Runnable{
     private static final int EXIT_COMMAND = -1;
     private static final int BUFFER_SIZE = 512;
     private final ObjectMapper objectMapper = new ObjectMapper();
-
+    private int height;
+    private int width;
 
     @Override
     public void run() {
+        setResolution();
         initializeRobot();
         processClientRequests();
+    }
+
+    private void setResolution() {
+        var graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        width = graphicsDevice.getDisplayMode().getWidth();
+        height = graphicsDevice.getDisplayMode().getHeight();
     }
 
     private void initializeRobot() {
@@ -65,10 +73,9 @@ public class ClientThread implements Runnable{
 
             switch (mouseEventDto.getAction()) {
                 case MOVE: {
-                    if (mouseEventDto.getX() <= screenManager.getWidth()
-                            && mouseEventDto.getY() <= screenManager.getWidth()) {
-                        robot.mouseMove(mouseEventDto.getX(), mouseEventDto.getY());
-                    }
+                    System.out.println("RAW: " + mouseEventDto.getX() + ":" + mouseEventDto.getY());
+                    System.out.println(scaleWidth(mouseEventDto.getX()) + ":" + scaleHeight(mouseEventDto.getY()));
+                    robot.mouseMove(scaleWidth(mouseEventDto.getX()), scaleHeight(mouseEventDto.getY()));
                 }
                     break;
                 case SCROLL: {
@@ -94,4 +101,13 @@ public class ClientThread implements Runnable{
             e.printStackTrace();
         }
     }
+
+    private int scaleWidth(int value) {
+        return width * value / 100;
+    }
+
+    private int scaleHeight(int value) {
+        return height * value / 100;
+    }
+
 }
