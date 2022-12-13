@@ -56,6 +56,7 @@ public class MouseControlActivity extends AppCompatActivity {
 
                 int x_norm = normalise((int) rx);
                 int y_norm = normalise((int) ry);
+                System.out.println(x_norm + " " + y_norm);
 
                 if (UserAction.LEFT_CLICK.value != 0) {
                     mouseEventDto.setAction(MouseAction.LEFT_CLICK);
@@ -115,19 +116,11 @@ public class MouseControlActivity extends AppCompatActivity {
     }
 
     private int normalise(int value) {
-        final int plus_minus_threshold = 180;
         final int max_value = 30;
-
-        if (value > plus_minus_threshold) {
-            value = -value;
-        }
-        if (value < -max_value) {
-            return -max_value;
-        }
-        if (value > max_value) {
-            return max_value;
-        }
-        return value;
+        value = Math.min(value, max_value);
+        value = Math.max(value, -max_value);
+        value += max_value;
+        return 100 * value / (2 * max_value);
     }
 
     @Override
