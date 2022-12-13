@@ -31,10 +31,8 @@ public class DeviceListActivity extends AppCompatActivity {
 
 	@SuppressLint("MissingPermission")
 	private final OnItemClickListener deviceClickListener = (parent, view, position, id) -> {
-		// Get the device MAC address, which is the last 17 chars in the View
-		String info = ((TextView) view).getText().toString();
-		int MACAddressCharsLength = 17;
-		String MACAddress = info.substring(info.length() - MACAddressCharsLength);
+		String deviceName = ((TextView) view).getText().toString();
+		String MACAddress = bluetoothManagement.getDeviceMACAddress(deviceName);
 
 		// Create the result Intent and include the MAC address
 		Intent intent = new Intent();

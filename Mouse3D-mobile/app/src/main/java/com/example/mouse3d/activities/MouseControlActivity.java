@@ -87,7 +87,6 @@ public class MouseControlActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        gyroscope.setRelativeDirections(gyroscope.getCurrentDirections());
     }
 
     @SuppressLint("MissingPermission")
@@ -101,8 +100,7 @@ public class MouseControlActivity extends AppCompatActivity {
         Button cancelButton = findViewById(R.id.cancel_button);
 
         BluetoothDevice bluetoothDevice = BluetoothManagement.getInstance().getActualRemoteDevice();
-        String deviceNameAndAddress = bluetoothDevice.getName() + "\n" + bluetoothDevice.getAddress();
-        deviceLabel.setText(deviceNameAndAddress);
+        deviceLabel.setText(bluetoothDevice.getName());
         new SwipeListener(middleButton);
 
         leftButton.setOnClickListener(view -> UserAction.LEFT_CLICK.value = 1);

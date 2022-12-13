@@ -54,21 +54,6 @@ public class BluetoothManagement {
         BluetoothManagement.mainActivityReference = mouseControlActivityReference;
     }
 
-    @SuppressLint("MissingPermission")
-    public void fillArrayWithPairedDevices(ArrayAdapter<String> pairedDevicesArrayAdapter, Activity activity) {
-        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-        if (pairedDevices.size() > 0) {
-            for (BluetoothDevice device : pairedDevices) {
-                //TODO show only devices with correct profile (e.g. no audio, no mouse, etc.)
-                String deviceNameAndAddress = device.getName() + "\n" + device.getAddress();
-                pairedDevicesArrayAdapter.add(deviceNameAndAddress);
-            }
-        } else {
-            //TODO test how it looks
-            activity.findViewById(R.id.nothing_paired_textview).setVisibility(View.VISIBLE);
-        }
-    }
-
     private BluetoothManagement() {
         bluetoothAdapter = bluetoothManager.getAdapter();
         configureBluetooth();
@@ -94,6 +79,20 @@ public class BluetoothManagement {
             } catch (SecurityException e) {
                 Toast.makeText(mainActivityReference, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    public void fillArrayWithPairedDevices(ArrayAdapter<String> pairedDevicesArrayAdapter, Activity activity) {
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                //TODO show only devices with correct profile (e.g. no audio, no mouse, etc.)
+                pairedDevicesArrayAdapter.add(device.getName());
+            }
+        } else {
+            //TODO test how it looks
+            activity.findViewById(R.id.nothing_paired_textview).setVisibility(View.VISIBLE);
         }
     }
 
@@ -123,6 +122,17 @@ public class BluetoothManagement {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    public String getDeviceMACAddress(String deviceName) {
+        Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
+        for (BluetoothDevice device : bondedDevices) {
+            if (deviceName.equals(device.getName())) {
+                return device.getAddress();
+            }
+        }
+        return "";
     }
 
     public void setRemoteDevice(String deviceName) {
