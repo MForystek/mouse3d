@@ -79,7 +79,7 @@ public class MouseControlActivity extends AppCompatActivity {
 
                 bluetoothClient.send(mouseEventDto);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                //System.out.println(e.getMessage());
             }
         });
         try {
