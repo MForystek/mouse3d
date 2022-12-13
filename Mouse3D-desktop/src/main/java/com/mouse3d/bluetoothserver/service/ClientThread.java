@@ -2,8 +2,6 @@ package com.mouse3d.bluetoothserver.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.mouse3d.model.MouseAction;
 import com.mouse3d.model.MouseEventDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +16,7 @@ import java.io.IOException;
 public class ClientThread implements Runnable{
 
     private final StreamConnection mConnection;
+    private final ScreenManager screenManager;
     private Robot robot;
 
     private static final int EXIT_COMMAND = -1;
@@ -64,20 +63,32 @@ public class ClientThread implements Runnable{
         try {
             var mouseEventDto = objectMapper.readValue(message, MouseEventDto.class);
 
-            if (mouseEventDto.getAction().equals(MouseAction.LEFT_CLICK)) {
-                robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-                robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            } else if (mouseEventDto.getAction().equals(MouseAction.MIDDLE_CLICK)) {
-                robot.mousePress(InputEvent.BUTTON2_DOWN_MASK);
-                robot.mousePress(InputEvent.BUTTON2_DOWN_MASK);
-            } else if (mouseEventDto.getAction().equals(MouseAction.RIGHT_CLICK)) {
-                robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
-                robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
-            } else if (mouseEventDto.getAction().equals(MouseAction.SCROLL)) {
-                robot.mouseWheel(mouseEventDto.getY());
-            } else if (mouseEventDto.getAction().equals(MouseAction.MOVE)) {
-                Point location = MouseInfo.getPointerInfo().getLocation();
-                robot.mouseMove(location.x + mouseEventDto.getX(), location.y + mouseEventDto.getY());
+            switch (mouseEventDto.getAction()) {
+                case MOVE: {
+                    if (mouseEventDto.getX() <= screenManager.getWidth()
+                            && mouseEventDto.getY() <= screenManager.getWidth()) {
+                        robot.mouseMove(mouseEventDto.getX(), mouseEventDto.getY());
+                    }
+                }
+                    break;
+                case SCROLL: {
+                    robot.mouseWheel(mouseEventDto.getY());
+                }
+                    break;
+                case LEFT_CLICK: {
+                    robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                    robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                }
+                    break;
+                case RIGHT_CLICK: {
+                    robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
+                    robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
+                }
+                    break;
+                case MIDDLE_CLICK: {
+                    robot.mousePress(InputEvent.BUTTON2_DOWN_MASK);
+                    robot.mousePress(InputEvent.BUTTON2_DOWN_MASK);
+                }
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
