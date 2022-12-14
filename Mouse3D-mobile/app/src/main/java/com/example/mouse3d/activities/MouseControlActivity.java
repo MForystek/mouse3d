@@ -17,6 +17,7 @@ import com.example.mouse3d.bluetooth.BluetoothManagement;
 import com.example.mouse3d.sensors.GyroscopeManager;
 import com.example.mouse3d.sensors.SwipeListener;
 import com.example.mouse3d.sensors.UserAction;
+import com.example.mouse3d.sensors.WorkPls;
 import com.mouse3d.model.MouseAction;
 import com.mouse3d.model.MouseEventDto;
 
@@ -26,7 +27,7 @@ public class MouseControlActivity extends AppCompatActivity {
     public static final String TAG = "MouseControlActivity";
 
     private BluetoothClient bluetoothClient;
-    private GyroscopeManager gyroscope;
+    private WorkPls workPls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +50,8 @@ public class MouseControlActivity extends AppCompatActivity {
     }
 
     private void gyroscopeConfig() {
-        gyroscope = new GyroscopeManager(MouseControlActivity.this);
-        gyroscope.setListener((rx, ry, rz) -> {
+        workPls = new WorkPls(MouseControlActivity.this);
+        workPls.setListener((rx, ry, rz) -> {
             try {
                 MouseEventDto mouseEventDto = new MouseEventDto();
 
@@ -106,7 +107,7 @@ public class MouseControlActivity extends AppCompatActivity {
         leftButton.setOnClickListener(view -> UserAction.LEFT_CLICK.value = 1);
         rightButton.setOnClickListener(view -> UserAction.RIGHT_CLICK.value = 1);
         middleButton.setOnClickListener(view -> UserAction.MIDDLE_CLICK.value = 1);
-        resetOrientationButton.setOnClickListener(view -> gyroscope.setRelativeDirections(gyroscope.getCurrentDirections()));
+        resetOrientationButton.setOnClickListener(view -> workPls.setRelativeDirections(workPls.getCurrentDirections()));
         cancelButton.setOnClickListener(view -> {
             setResult(Activity.RESULT_OK);
             onPause();
@@ -125,13 +126,13 @@ public class MouseControlActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        gyroscope.register();
+        workPls.register();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        gyroscope.unregister();
+        workPls.unregister();
         if (bluetoothClient != null) {
             bluetoothClient.close();
         }
