@@ -54,9 +54,9 @@ public class MouseControlActivity extends AppCompatActivity {
             try {
                 MouseEventDto mouseEventDto = new MouseEventDto();
 
-                int x_norm = normalise((int) rx);
-                int y_norm = normalise((int) ry);
-                System.out.println(x_norm + " " + y_norm);
+                int x_norm = normaliseX((int) rx);
+                int y_norm = normaliseY((int) ry);
+                //System.out.println(x_norm + " " + y_norm);
 
                 if (UserAction.LEFT_CLICK.value != 0) {
                     mouseEventDto.setAction(MouseAction.LEFT_CLICK);
@@ -83,7 +83,7 @@ public class MouseControlActivity extends AppCompatActivity {
             }
         });
         try {
-            Thread.sleep(1000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -114,12 +114,22 @@ public class MouseControlActivity extends AppCompatActivity {
         });
     }
 
-    private int normalise(int value) {
-        final int max_value = 30;
-        value = Math.min(value, max_value);
-        value = Math.max(value, -max_value);
-        value += max_value;
-        return 100 * value / (2 * max_value);
+    private int normaliseX(int value) {
+//        System.out.print("X " + value);
+        final int maxValueX = 60;
+        value = Math.min(value, maxValueX);
+        value = Math.max(value, -maxValueX);
+        value += maxValueX;
+        return 100 * value / (2 * maxValueX);
+    }
+
+    private int normaliseY(int value) {
+//        System.out.println(" Y " + value);
+        final int maxValueY = 60;
+        value = Math.min(value, maxValueY);
+        value = Math.max(value, -maxValueY);
+        value += maxValueY;
+        return 100 * value / (2 * maxValueY);
     }
 
     @Override
