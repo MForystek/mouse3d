@@ -6,6 +6,6 @@ Project created by:
 
 Michał Kurdziel https://github.com/Heliwrenaid
 
-Mmichał Forystek https://github.com/MForystek
+Michał Forystek https://github.com/MForystek
 
 Szymon Szymiczek https://github.com/sszymiczek
